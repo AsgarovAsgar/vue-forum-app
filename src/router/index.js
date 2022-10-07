@@ -1,20 +1,39 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import PageHome from "@/components/PageHome.vue";
-import PageThreadShow from "@/components/PageThreadShow.vue";
+import Home from "@/pages/Home.vue";
+import ThreadShow from "@/pages/ThreadShow.vue";
+import NotFound from "@/pages/NotFound.vue";
+
+import sourceData from '@/data.json'
 
 const routes = [
   {
     path: "/",
     name: "Home",
-    component: PageHome,
+    component: Home,
   },
   {
     path: "/thread/:id",
     name: "ThreadShow",
-    component: PageThreadShow,
-    props: true
+    component: ThreadShow,
+    props: true,
+    beforeEnter(to, from, next) {
+      //check if thread exist
+      const thread = threadById(to.params.id);
+      // if exists continue
+      if(thread) {
+        return next()
+      } else {
+        next({
+          name: "NotFound",
+          params: { pathMatch: to.path.substring(1).split("/") },
+          query: to.query,
+          hash: to.hash
+        });
+      }
+    }
   },
+  { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 ];
 
 const router = createRouter({
@@ -22,5 +41,14 @@ const router = createRouter({
   history: createWebHistory(),
   routes, // short for `routes: routes`
 });
+
+const threadById = function (id) {
+  const _threads = Object.entries(sourceData.threads);
+  for (let t of _threads) {
+    if (t[0] !== id) continue;
+    return t[1];
+    // console.log('User: ', user);
+  }
+};
 
 export default router
