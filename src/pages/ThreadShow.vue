@@ -2,16 +2,15 @@
   <div class="bg-slate-100 h-full">
     <div class="p-4 max-w-4xl mx-auto space-y-4">
       <h1 class="text-3xl font-bold">{{thread.title}}</h1>
-      <div v-for="postId in thread.posts" :key="postId" class="p-4 rounded shadow flex gap-8  bg-white">
-        <div class="flex flex-col gap-4 w-24">
-          <h2 class="text-green-500 text-sm">{{ userById(postById(postId).userId).name }}</h2>
-          <img class="h-20 w-20 border rounded-full flex-shrink-0 object-cover" :src="userById(postById(postId).userId).avatar" alt="">
-          <p class="text-xs">{{ Object.keys(userById(postById(postId).userId).posts).length }} posts</p>
-        </div>
-        <div class="flex flex-col justify-between w-full">
-          <p>{{ postById(postId).text }}</p>
-          <p class="text-xs text-gray-500 self-end">{{postById(postId).publishedAt}}</p>
-        </div>
+      <PostList :posts="threadPosts"/>
+      <div id="form">
+        <form class="flex flex-col space-y-4">
+          <!-- <textarea :value="newPostText" @input="newPostText = $event.target.value"></textarea> -->
+          <textarea v-model="newPostText" class="rounded border p-4" cols="30" rows="10"></textarea>
+          <div class="flex justify-end">
+           <button class="rounded px-6 py-3 bg-blue-700 text-white">Submit post</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -19,6 +18,7 @@
 
 <script>
 import sourceData from '@/data.json'
+import PostList from '@/components/PostList.vue'
 
 export default {
   props: {
@@ -27,11 +27,14 @@ export default {
       type: String
     }
   },
+  components: {
+    PostList
+  },
   data() {
     return {
       threads: sourceData.threads,
       posts: sourceData.posts,
-      users: sourceData.users
+      newPostText: ''
     }
   },
   computed: {
@@ -39,30 +42,33 @@ export default {
       const _threads = Object.entries(this.threads)
       let output
       for (let thread of _threads) {
-        if(thread[0] !== this.$route.params.id) continue //this.$route.params.id
+        if(thread[0] !== this.id) continue //this.$route.params.id
         output = thread[1]
-
+      }
+      return output
+    },
+    threadPosts() {
+      const _posts = Object.entries(this.posts)
+      const output = []
+      for ( const post of _posts) {
+        // console.log(key, post);
+        if(post[1].threadId !== this.id) continue
+        output.push(post[1])
       }
       return output
     }
   },
    methods: {
-    postById(postId) {
-      const _posts = Object.entries(this.posts)
-      for (let post of _posts) {
-        if(post[0] !== postId) continue
-        return post[1]
-        // console.log(post);
-
+    addPost() {
+      const postId = 'aaaa' + Math.random() * 5
+      const post = {
+        id: postId,
+        text: this.newPostText,
+        publishedAt: Math.floor(Date.now() / 1000),
+        threadId: this.id,
+        userId: '38St7Q8Zi2N1SPa5ahzssq9kbyp1'
       }
-    },
-    userById(userId) {
-      const _users = Object.entries(this.users)
-      for (let user of _users) {
-        if(user[0] !== userId) continue
-        return user[1]
-        // console.log('User: ', user);
-      }
+      sourceData.posts.push(post)
     }
   }
 }
