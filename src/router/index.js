@@ -19,7 +19,8 @@ const routes = [
     props: true,
     beforeEnter(to, from, next) {
       //check if thread exist
-      const thread = threadById(to.params.id);
+      // const thread = threadById(to.params.id);
+      const thread = sourceData.threads.find(thread => thread.id = to.params.id);
       // if exists continue
       if(thread) {
         return next()
@@ -43,12 +44,13 @@ const router = createRouter({
 });
 
 const threadById = function (id) {
-  const _threads = Object.entries(sourceData.threads);
-  for (let t of _threads) {
-    if (t[0] !== id) continue;
-    return t[1];
-    // console.log('User: ', user);
-  }
+  // const _threads = Object.entries(sourceData.threads);
+  // for (let t of _threads) {
+  //   if (t[0] !== id) continue;
+  //   return t[1];
+  //   // console.log('User: ', user);
+  // }
+
 };
 
 export default router

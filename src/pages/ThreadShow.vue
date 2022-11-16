@@ -4,7 +4,7 @@
       <h1 class="text-3xl font-bold">{{thread.title}}</h1>
       <PostList :posts="threadPosts"/>
       <div id="form">
-        <form class="flex flex-col space-y-4">
+        <form @submit.prevent="addPost" class="flex flex-col space-y-4">
           <!-- <textarea :value="newPostText" @input="newPostText = $event.target.value"></textarea> -->
           <textarea v-model="newPostText" class="rounded border p-4" cols="30" rows="10"></textarea>
           <div class="flex justify-end">
@@ -21,6 +21,7 @@ import sourceData from '@/data.json'
 import PostList from '@/components/PostList.vue'
 
 export default {
+  name: 'ThreadShow',
   props: {
     id: {
       required: true,
@@ -38,27 +39,10 @@ export default {
     }
   },
   computed: {
-    thread() {
-      const _threads = Object.entries(this.threads)
-      let output
-      for (let thread of _threads) {
-        if(thread[0] !== this.id) continue //this.$route.params.id
-        output = thread[1]
-      }
-      return output
-    },
-    threadPosts() {
-      const _posts = Object.entries(this.posts)
-      const output = []
-      for ( const post of _posts) {
-        // console.log(key, post);
-        if(post[1].threadId !== this.id) continue
-        output.push(post[1])
-      }
-      return output
-    }
+    thread() { return this.threads.find(thread => thread.id === this.$route.params.id) },
+    threadPosts() { return this.posts.filter(post => post.threadId === this.id) }
   },
-   methods: {
+  methods: {
     addPost() {
       const postId = 'aaaa' + Math.random() * 5
       const post = {
@@ -68,7 +52,9 @@ export default {
         threadId: this.id,
         userId: '38St7Q8Zi2N1SPa5ahzssq9kbyp1'
       }
-      sourceData.posts.push(post)
+      this.posts.push(post)
+      this.thread.posts.push(postId)
+      this.newPostText = ''
     }
   }
 }
