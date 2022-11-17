@@ -6,7 +6,9 @@
       <p class="text-green-500 text-lg">
         <router-link :to="{name: 'ThreadShow', params: {id: thread.id}}">{{thread.title}}</router-link>
       </p>
-      <p class="text-sm">By {{ userById(thread.userId).name }}, {{thread.publishedAt}}</p>
+      <p class="text-sm">By 
+        <span>{{ userById(thread.userId).name }}</span>, 
+        <AppDate :timestamp="thread.publishedAt" /></p>
     </div>
     <div class="text-lg w-1/4 flex items-center">
       <p>{{thread.posts.length}} replies</p>
@@ -17,7 +19,9 @@
         <p class="text-green-500">
           <a href="#">{{ userById(thread.userId).name }}</a>
         </p>
-        <p>{{thread.publishedAt}}</p>
+        <p>
+          <AppDate :timestamp="thread.publishedAt" />
+        </p>
       </div>
     </div> 
   </div>
@@ -52,7 +56,7 @@ export default {
       //   // console.log(post);
 
       // }
-      return this.posts.find(p => p.id === postId)
+      return this.posts.find(post => post.id === postId)
     },
     userById(userId) {
       // const _users = Object.entries(this.users)
@@ -61,7 +65,7 @@ export default {
       //   return user[1]
       //   // console.log('User: ', user);
       // }
-      return this.users.find(u=> u.id === userId)
+      return this.users.find(user => user.id === userId)
     }
   }
 }

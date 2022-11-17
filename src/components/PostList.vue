@@ -8,7 +8,9 @@
       </div>
       <div class="flex flex-col justify-between w-full">
         <p>{{ post.text }}</p>
-        <p class="text-xs text-gray-500 self-end">{{ post.publishedAt}}</p>
+        <div class="text-xs text-gray-500 self-end">
+          <AppDate :timestamp="post.publishedAt" />
+        </div>
       </div>
     </div>
   </div>
@@ -37,7 +39,7 @@ export default {
       //   return user[1]
       //   // console.log('User: ', user);
       // }
-      return this.users.find(u=> u.id === userId)
+      return this.users.find(user => user.id === userId)
     }
   }
 }
