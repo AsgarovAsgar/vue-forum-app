@@ -1,5 +1,9 @@
 <template>
-  <div class="m-4">
+  <div class="m-4 border">
+    <h2 class="w-full text-white text-2xl bg-blue-500 p-2">
+      <router-link v-if="categoryId" :to="{name: 'Category', params: {id: categoryId}}">{{ title }}</router-link>
+      <span v-else>{{ title }}</span>
+    </h2>
     <div v-for="forum in forums" :key="forum.id" class="py-2 px-4 w-full grid grid-cols-2 odd:bg-white even:bg-slate-100">
       <div class="">
         <router-link :to="{name: 'Forum', params: {id: forum.id}}" class="text-xl text-green-500 font-medium">{{ forum.name }}</router-link>
@@ -21,6 +25,14 @@ export default {
     forums: {
       required: true,
       type: Array
+    },
+    title: {
+      type: String,
+      default: 'Forums'
+    },
+    categoryId: {
+      required: false,
+      type: String
     }
   },
   methods: {

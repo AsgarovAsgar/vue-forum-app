@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import sourceData from '@/data.json'
 
 export default {
   props: {
@@ -26,9 +25,9 @@ export default {
       required: true
     },
   },
-  data() {
-    return {
-      users: sourceData.users
+  computed: {
+    users() {
+      return this.$store.state.users
     }
   },
   methods: {

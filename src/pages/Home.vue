@@ -1,19 +1,24 @@
 <template>
   <h1 class="text-3xl font-bold text-center m-4">Welcome to the Forum</h1>
-  <ForumList :forums="forums" />
+  <CategoryList :categories="categories" />
 </template>
 
 <script>
-import ForumList from '@/components/ForumList.vue'
+import CategoryList from '@/components/CategoryList.vue'
 import sourceData from '@/data.json'
 
 export default {
   components: {
-    ForumList
+    CategoryList
   },
   data() {
     return {
-      forums: sourceData.forums
+      
+    }
+  },
+  computed: {
+    categories() { 
+      return this.$store.state.categories
     }
   }
 }
