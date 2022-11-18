@@ -29,7 +29,6 @@
 </template>
 
 <script>
-import sourceData from '@/data.json'
 
 export default {
   props: {
@@ -38,33 +37,19 @@ export default {
       required: true
     }
   },
-  data() {
-    return {
-      posts: sourceData.posts,
-      users: sourceData.users
-    }
+  computed: {
+    users() { 
+      return this.$store.state.users 
+    },
+    posts() { 
+      return this.$store.state.posts
+    },
   },
   methods: {
-    // threadId(thread) {
-    //   return Object.entries(thread)[Object.entries(thread).length - 1][1]
-    // },
     postById(postId) {
-      // const _posts = Object.entries(this.posts)
-      // for (let post of _posts) {
-      //   if(post[0] !== postId) continue
-      //   return post[1]
-      //   // console.log(post);
-
-      // }
       return this.posts.find(post => post.id === postId)
     },
     userById(userId) {
-      // const _users = Object.entries(this.users)
-      // for (let user of _users) {
-      //   if(user[0] !== userId) continue
-      //   return user[1]
-      //   // console.log('User: ', user);
-      // }
       return this.users.find(user => user.id === userId)
     }
   }
