@@ -5,6 +5,7 @@ import Category from "@/pages/Category.vue";
 import Forum from "@/pages/Forum.vue";
 import ThreadShow from "@/pages/ThreadShow.vue";
 import NotFound from "@/pages/NotFound.vue";
+import Profile from "@/pages/Profile.vue";
 
 import sourceData from '@/data.json'
 
@@ -15,16 +16,21 @@ const routes = [
     component: Home,
   },
   {
-    path: '/category/:id',
-    name: 'Category',
-    component: Category,
-    props: true
+    path: "/profile",
+    name: "Profile",
+    component: Profile,
   },
   {
-    path: '/forum/:id',
-    name: 'Forum',
+    path: "/category/:id",
+    name: "Category",
+    component: Category,
+    props: true,
+  },
+  {
+    path: "/forum/:id",
+    name: "Forum",
     component: Forum,
-    props: true
+    props: true,
   },
   {
     path: "/thread/:id",
@@ -34,19 +40,21 @@ const routes = [
     beforeEnter(to, from, next) {
       //check if thread exist
       // const thread = threadById(to.params.id);
-      const thread = sourceData.threads.find(thread => thread.id = to.params.id);
+      const thread = sourceData.threads.find(
+        (thread) => (thread.id = to.params.id)
+      );
       // if exists continue
-      if(thread) {
-        return next()
+      if (thread) {
+        return next();
       } else {
         next({
           name: "NotFound",
           params: { pathMatch: to.path.substring(1).split("/") },
           query: to.query,
-          hash: to.hash
+          hash: to.hash,
         });
       }
-    }
+    },
   },
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 ];
