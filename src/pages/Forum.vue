@@ -3,7 +3,7 @@
     <h1 class="text-3xl font-bold">{{ forum.name }}</h1>
     <div class="flex justify-between">
       <h2 class="text-xl font-bold">{{ forum.description }}</h2>
-      <button class="px-4 py-2 text-lg bg-green-500 text-white rounded">Start a thread</button>
+      <router-link :to="{name: 'ThreadCreate', params: {forumId: forum.id}}" class="px-4 py-2 text-lg bg-green-500 text-white rounded">Start a thread</router-link>
     </div>
     <ThreadList :threads="threads" />
   </div>
