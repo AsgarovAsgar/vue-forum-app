@@ -4,6 +4,7 @@ import Home from "@/pages/Home.vue";
 import Category from "@/pages/Category.vue";
 import Forum from "@/pages/Forum.vue";
 import ThreadShow from "@/pages/ThreadShow.vue";
+import ThreadCreate from "@/pages/ThreadCreate.vue";
 import NotFound from "@/pages/NotFound.vue";
 import Profile from "@/pages/Profile.vue";
 
@@ -16,9 +17,16 @@ const routes = [
     component: Home,
   },
   {
-    path: "/profile",
+    path: "/me",
     name: "Profile",
     component: Profile,
+    meta: { toTop: true, smoothScroll: true },
+  },
+  {
+    path: "/me/edit",
+    name: "ProfileEdit",
+    component: Profile,
+    props: { edit: true },
   },
   {
     path: "/category/:id",
@@ -56,6 +64,12 @@ const routes = [
       }
     },
   },
+  {
+    path: "/forum/:id/thread/create",
+    name: "ThreadCreate",
+    component: ThreadCreate,
+    props: true,
+  },
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 ];
 
@@ -63,16 +77,12 @@ const router = createRouter({
   // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
   history: createWebHistory(),
   routes, // short for `routes: routes`
+  scrollBehavior(to) {
+    const scroll = {}
+    if (to.meta.toTop) scroll.top = 0
+    if (to.meta.smoothScroll) scroll.behavior = 'smooth'
+    return scroll
+  }
 });
-
-const threadById = function (id) {
-  // const _threads = Object.entries(sourceData.threads);
-  // for (let t of _threads) {
-  //   if (t[0] !== id) continue;
-  //   return t[1];
-  //   // console.log('User: ', user);
-  // }
-
-};
 
 export default router
