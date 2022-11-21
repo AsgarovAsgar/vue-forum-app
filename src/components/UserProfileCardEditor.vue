@@ -27,7 +27,7 @@
       </div>
       <div class="flex justify-between text-white">
         <button @click="cancel" class="px-4 py-2 bg-red-500 rounded text-sm hover:bg-red-700">Cancel</button>
-        <button class="px-4 py-2 bg-blue-500 rounded text-sm hover:bg-blue-700">Save</button>
+        <button type="submit" class="px-4 py-2 bg-blue-500 rounded text-sm hover:bg-blue-700">Save</button>
       </div>
     </form>
   </div>
