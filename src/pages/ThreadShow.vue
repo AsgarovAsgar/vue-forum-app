@@ -5,6 +5,10 @@
         <h1 class="text-3xl font-bold">{{thread.title}}</h1>
         <router-link :to="{name: 'ThreadEdit', params: {id: this.id}}" class="rounded bg-blue-500 px-4 py-2 text-white text-sm" >Edit</router-link>
       </div>
+      <div class="flex items-center justify-between">
+        <div>By {{ thread.author.name }}, <AppDate :timestamp="thread.publishedAt" /></div>
+        <p>{{thread.repliesCount}} replies by {{thread.contributorsCount}} contributors</p>
+      </div>
       <PostList :posts="threadPosts"/>
       <PostEditor @save="addPost" />
     </div>
@@ -35,7 +39,7 @@ export default {
       return this.$store.state.posts
     },
     thread() {
-      return this.threads.find(thread => thread.id === this.$route.params.id)
+      return this.$store.getters.thread(this.id)
     },
     threadPosts() { 
       return this.posts.filter(post => post.threadId === this.id) 
