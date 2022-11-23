@@ -49,9 +49,7 @@ const routes = [
     beforeEnter(to, from, next) {
       //check if thread exist
       // const thread = threadById(to.params.id);
-      const thread = sourceData.threads.find(
-        (thread) => (thread.id = to.params.id)
-      );
+      const thread = sourceData.threads.find(thread => thread.id === to.params.id);
       // if exists continue
       if (thread) {
         return next();

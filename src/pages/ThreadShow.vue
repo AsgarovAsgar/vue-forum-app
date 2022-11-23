@@ -6,7 +6,7 @@
         <router-link :to="{name: 'ThreadEdit', params: {id: this.id}}" class="rounded bg-blue-500 px-4 py-2 text-white text-sm" >Edit</router-link>
       </div>
       <div class="flex items-center justify-between">
-        <div>By {{ thread.author.name }}, <AppDate :timestamp="thread.publishedAt" /></div>
+        <div>By {{ thread.author?.name }}, <AppDate :timestamp="thread.publishedAt" /></div>
         <p>{{thread.repliesCount}} replies by {{thread.contributorsCount}} contributors</p>
       </div>
       <PostList :posts="threadPosts"/>
@@ -18,6 +18,10 @@
 <script>
 import PostList from '@/components/PostList.vue'
 import PostEditor from '@/components/PostEditor.vue'
+
+import firebase from 'firebase/compat/app';
+// import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 export default {
   name: 'ThreadShow',
@@ -54,6 +58,31 @@ export default {
 
       this.$store.dispatch('createPost', post)
     }
+  },
+  async created() {
+    // fetch the thread
+    const thread = await this.$store.dispatch('fetchThread', {id: this.id})
+    console.log('thread', thread);
+
+    // fetch the user
+    firebase.firestore().collection('users').doc(thread.userId).onSnapshot(doc => {
+      const user = {...doc.data(), id: doc.id}
+      this.$store.commit('setUser', { user })
+    })
+
+    // fetch the posts
+    thread.posts.forEach(postId => {
+      firebase.firestore().collection('posts').doc(postId).onSnapshot(doc => {
+        const post = { ...doc.data(), id: doc.id }
+        this.$store.commit('setPost', { post })
+
+        // fetch the users
+        firebase.firestore().collection('users').doc(post.userId).onSnapshot(doc => {
+          const user = { ...doc.data(), id: doc.id }
+          this.$store.commit('setUser', { user })
+        })
+      })
+    })
   }
 }
 </script>
