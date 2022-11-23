@@ -1,9 +1,11 @@
 <template>
   <div class="space-y-4 m-4">
-    <h1 class="text-3xl font-bold">{{ forum.name }}</h1>
-    <div class="flex justify-between">
-      <h2 class="text-xl font-bold">{{ forum.description }}</h2>
-      <router-link :to="{name: 'ThreadCreate', params: {forumId: forum.id}}" class="px-4 py-2 text-lg bg-green-500 text-white rounded">Start a thread</router-link>
+    <div class="mx-auto max-w-6xl">
+      <h1 class="text-3xl font-bold">{{ forum.name }}</h1>
+      <div class="flex justify-between">
+        <h2 class="text-xl font-bold">{{ forum.description }}</h2>
+        <router-link :to="{name: 'ThreadCreate', params: {forumId: forum.id}}" class="px-4 py-2 text-lg bg-green-500 text-white rounded">Start a thread</router-link>
+      </div>
     </div>
     <ThreadList :threads="threads" />
   </div>
@@ -26,7 +28,8 @@ export default {
       return this.$store.state.forums.find(forum => forum.id === this.id)
     },
     threads() {
-      return this.$store.state.threads.filter(thread => thread.forumId === this.id)
+      return this.forum.threads.map(threadId => this.$store.getters.thread(threadId))
+      // return this.$store.state.threads.filter(thread => thread.forumId === this.id)
     }
   }
 }

@@ -11,7 +11,7 @@
         <AppDate :timestamp="thread.publishedAt" /></p>
     </div>
     <div class="text-lg w-1/4 flex items-center">
-      <p>{{thread.posts.length}} replies</p>
+      <p>{{thread.repliesCount}} replies</p>
     </div>
     <div class="flex gap-2 w-1/4">
       <img class="w-10 h-10 rounded-full object-cover" :src="userById(thread.userId).avatar" alt="">

@@ -1,33 +1,45 @@
 import { createStore } from 'vuex'
-import SourceData from '@/data'
+// import SourceData from '@/data'
 import { findById, upsert } from '@/helpers'
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 
 export default createStore({
   state: {
-    ...SourceData,
+    categories: [],
+    forums: [],
+    posts: [],
+    threads: [],
+    users: [],
+    // ...SourceData,
     authId: "u4r8XCziZEWEXsj2UIKNHBoDh0n2",
   },
   getters: {
-    authUser: (state) => {
-      const user = findById(state.users, state.authId);
-      if (!user) return null
-      return {
-        ...user,
-        // authUser.post
-        get posts() {
-          return state.posts.filter((post) => post.userId === user.id);
-        },
-        // authUser.postCount
-        get postsCount() {
-          return this.posts.length;
-        },
-        get threads() {
-          return state.threads.filter((thread) => thread.userId === user.id);
-        },
-        get threadsCount() {
-          return this.threads.length;
-        },
-      };
+    authUser: (state, getters) => {
+      return getters.user(state.authId)
+    },
+    user: state => {
+      return (id) => {
+        const user = findById(state.users, id)
+        if (!user) return null
+        return {
+          ...user,
+          // authUser.post
+          get posts() {
+            return state.posts.filter((post) => post.userId === user.id);
+          },
+          // authUser.postCount
+          get postsCount() {
+            return this.posts.length;
+          },
+          get threads() {
+            return state.threads.filter((thread) => thread.userId === user.id);
+          },
+          get threadsCount() {
+            return this.threads.length;
+          },
+        }
+      }
     },
     thread: state => {
       return id => {
@@ -90,6 +102,16 @@ export default createStore({
     },
     updateUser({commit}, user) {
       commit('setUser', { user, userId: user.id } )
+    },
+    fetchThread({state, commit}, {id}) {
+      console.log('fireeee', id);
+      return new Promise(resolve => {
+        firebase.firestore().collection('threads').doc(id).onSnapshot(doc => {
+          const thread = {...doc.data(), id: doc.id}
+          commit('setThread', { thread })
+          resolve(thread)
+      })
+      })
     }
   },
   mutations: {
@@ -99,9 +121,10 @@ export default createStore({
     setThread(state, { thread }) {
       upsert(state.threads, thread)
     },
-    setUser(state, { user, userId }) {
-      const userIndex = state.users.findIndex(user => user.id === userId)
-      state.users[userIndex] = user
+    setUser(state, { user }) {
+      upsert(state.users, user )
+      // const userIndex = state.users.findIndex(user => user.id === userId)
+      // state.users[userIndex] = user
     },
     appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
     appendThreadToForum: makeAppendChildToParentMutation({ parent: 'forums', child: 'threads' }),
