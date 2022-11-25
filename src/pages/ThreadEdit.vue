@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col max-w-3xl m-4 mx-auto gap-4">
+  <div v-if="thread && text" class="flex flex-col max-w-3xl m-4 mx-auto gap-4">
     <h1 class="text-3xl font-bold">Editin <i>{{thread.title }}</i></h1>
     <ThreadEditor :title="thread.title" :text="text" @save="save" @cancel="cancel" />
   </div>
@@ -7,6 +7,8 @@
 
 <script>
 import ThreadEditor from '@/components/ThreadEditor.vue'
+import { mapActions } from 'vuex'
+
 export default {
   components: { ThreadEditor },
   props: {
@@ -20,14 +22,14 @@ export default {
       return this.$store.state.threads.find(thread => thread.id === this.id)
     },
     text() {
-      return this.$store.state.posts.find(
-        post => post.id === this.thread.posts[0]
-      ).text
+      const post = this.$store.state.posts.find(post => post.id === this.thread.posts[0])
+      return post ? post.text : ''
     }
   },
   methods: {
+    ...mapActions(['updateThread', 'fetchThread', 'fetchPost']),
     async save({title, text}) {
-      const thread = await this.$store.dispatch('updateThread', {
+      const thread = await this.updateThread({
         id: this.id,
         title,
         text
@@ -37,6 +39,10 @@ export default {
     cancel() {
       this.$router.push({ name: 'ThreadShow', params: {id: this.id }})
     }
+  },
+  async created() {
+    const thread = await this.fetchThread({ id: this.id })
+    this.fetchPost({ id: thread.posts[0] })
   }
 }
 </script>

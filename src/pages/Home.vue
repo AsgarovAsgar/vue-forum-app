@@ -5,21 +5,23 @@
 
 <script>
 import CategoryList from '@/components/CategoryList.vue'
-import sourceData from '@/data.json'
-
+import { mapActions } from 'vuex'
 export default {
   components: {
     CategoryList
-  },
-  data() {
-    return {
-      
-    }
   },
   computed: {
     categories() { 
       return this.$store.state.categories
     }
+  },
+  methods: {
+    ...mapActions(['fetchAllCategories', 'fetchForums'])
+  },
+  async created() {
+    const categories = await this.fetchAllCategories()
+    const forumIds = categories.flatMap(category => category.forums)
+    this.fetchForums({ ids: forumIds })
   }
 }
 </script>
