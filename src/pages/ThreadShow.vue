@@ -18,10 +18,11 @@
 <script>
 import PostList from '@/components/PostList.vue'
 import PostEditor from '@/components/PostEditor.vue'
+import {mapActions} from 'vuex'
 
-import firebase from 'firebase/compat/app';
+// import firebase from 'firebase/compat/app';
 // import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+// import 'firebase/compat/firestore';
 
 export default {
   name: 'ThreadShow',
@@ -43,6 +44,7 @@ export default {
       return this.$store.state.posts
     },
     thread() {
+      console.log('threadShow computed', this.id);
       return this.$store.getters.thread(this.id)
     },
     threadPosts() { 
@@ -50,34 +52,34 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['createPost', 'fetchThread', 'fetchUsers', 'fetchPosts']),
     addPost(eventData) {
       const post = {
         ...eventData.post,
         threadId: this.id,
       }
-
-      this.$store.dispatch('createPost', post)
+      this.createPost(post)
     }
   },
   async created() {
+    console.log('threadShow created', this.id);
     // fetch the thread
-    const thread = await this.$store.dispatch('fetchThread', {id: this.id})
+    const thread = await this.fetchThread({id: this.id})
 
     // fetch the user
-    this.$store.dispatch('fetchUser', {id: thread.userId})
+    // this.fetchUser({id: thread.userId})
 
-    // // fetch the posts
-    // const posts = await this.$store.dispatch('fetchPosts', {ids: thread.posts})
-    
-    // //fetch the users associated with the posts
-    // const users = posts.map(post => post.userId)
-    // this.$store.dispatch('fetchUsers', {ids: users})
+    // fetch the posts
+    const posts = await this.fetchPosts({ids: thread.posts})    
+    //fetch the users associated with the posts
+    const users = posts.map(post => post.userId).concat(thread.userId)
+    this.fetchUsers({ids: users})
 
-    thread.posts.forEach(async (postId) => {
-      const post = await this.$store.dispatch('fetchPost', { id: postId })
-      // fetch the users
-      this.$store.dispatch('fetchUser', {id: post.userId})    
-    })
+    // thread.posts.forEach(async (postId) => {
+    //   const post = await this.$store.dispatch('fetchPost', { id: postId })
+    //   // fetch the users
+    //   this.$store.dispatch('fetchUser', {id: post.userId})    
+    // })
   }
 }
 </script>

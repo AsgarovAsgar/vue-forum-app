@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col max-w-3xl m-4 mx-auto gap-4">
+  <div v-if="forum" class="flex flex-col max-w-3xl m-4 mx-auto gap-4">
     <h1 class="text-3xl font-bold">Create new thread in <i>{{forum.name}}</i></h1>
     <ThreadEditor @save="save" @cancel="cancel" />
   </div>
@@ -7,6 +7,8 @@
 
 <script>
 import ThreadEditor from '@/components/ThreadEditor.vue'
+import { mapActions } from 'vuex'
+
 export default {
   components: { ThreadEditor },
   props: {
@@ -21,8 +23,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['createThread', 'fetchForum']),
     async save({title, text}) {
-      const thread = await this.$store.dispatch('createThread', {
+      const thread = await this.createThread({
         forumId: this.forumId,
         title,
         text
@@ -32,6 +35,9 @@ export default {
     cancel() {
       this.$router.push({ name: 'Forum', params: {id: this.forum.id }})
     }
+  },
+  created() {
+    this.fetchForum({ id: this.forumId })
   }
 }
 </script>

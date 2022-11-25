@@ -9,8 +9,6 @@ import ThreadEdit from "@/pages/ThreadEdit.vue";
 import NotFound from "@/pages/NotFound.vue";
 import Profile from "@/pages/Profile.vue";
 
-import sourceData from '@/data.json'
-
 const routes = [
   {
     path: "/",
@@ -46,22 +44,21 @@ const routes = [
     name: "ThreadShow",
     component: ThreadShow,
     props: true,
-    beforeEnter(to, from, next) {
-      //check if thread exist
-      // const thread = threadById(to.params.id);
-      const thread = sourceData.threads.find(thread => thread.id === to.params.id);
-      // if exists continue
-      if (thread) {
-        return next();
-      } else {
-        next({
-          name: "NotFound",
-          params: { pathMatch: to.path.substring(1).split("/") },
-          query: to.query,
-          hash: to.hash,
-        });
-      }
-    },
+    // beforeEnter(to, from, next) {
+    //   //check if thread exist
+    //   const thread = sourceData.threads.find(thread => thread.id === to.params.id);
+    //   // if exists continue
+    //   if (thread) {
+    //     return next();
+    //   } else {
+    //     next({
+    //       name: "NotFound",
+    //       params: { pathMatch: to.path.substring(1).split("/") },
+    //       query: to.query,
+    //       hash: to.hash,
+    //     });
+    //   }
+    // },
   },
   {
     path: "/forum/:forumId/thread/create",
