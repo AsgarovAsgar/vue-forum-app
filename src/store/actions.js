@@ -1,44 +1,78 @@
 import { findById } from "@/helpers";
 import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 import "firebase/compat/firestore";
+import db from "@/config/firebase";
+
+
 
 export default {
   async createPost({ commit, state }, post) {
-    post.publishedAt = Math.floor(Date.now() / 1000);
+    post.publishedAt = firebase.firestore.FieldValue.serverTimestamp()
     post.userId = state.authId;
+    // const newPost = await db.collection('posts').add(post)
+    // await db.collection('threads').doc(post.threadId).update({
+    //   posts: firebase.firestore.FieldValue.arrayUnion(newPost.id),
+    //   contributors: firebase.firestore.FieldValue.arrayUnion(state.authId)
+    // })
+    
     // firebase
-    const newPost = await firebase.firestore.collection('posts').add(post)
-    await firebase.firestore().collection('threads').doc(post.threadId).update({
-      posts: firebase.firestore.FieldValue.arrayUnion(newPost.id),
+    const batch = firebase.firestore().batch()
+    const postRef = firebase.firestore().collection("posts").doc()
+    const threadRef = firebase.firestore().collection("threads").doc(post.threadId);
+    const userRef = firebase.firestore().collection('users').doc(state.authId)
+    batch.set(postRef, post)
+    batch.update(threadRef, {
+      posts: firebase.firestore.FieldValue.arrayUnion(postRef.id),
       contributors: firebase.firestore.FieldValue.arrayUnion(state.authId)
+    });
+    batch.update(userRef, {
+      postsCount: firebase.firestore.FieldValue.increment(1)
     })
+    await batch.commit()
 
-    commit("setItem", { resource: "posts", item: { ...post, id: newPost.id } });
+    const newPost = await postRef.get()
+    commit("setItem", { resource: "posts", item: { ...newPost.data(), id: newPost.id } });
     commit("appendPostToThread", { childId: newPost.id, parentId: post.threadId });
     commit("appendContributorsToThread", { childId: state.authId, parentId: post.threadId });
   },
   async createThread({ commit, state, dispatch }, { text, title, forumId }) {
-    const id = "aaaa" + Math.random() * 5;
-    const publishedAt = Math.floor(Date.now() / 1000);
+    const publishedAt = firebase.firestore.FieldValue.serverTimestamp()
     const userId = state.authId;
-    const thread = {
-      forumId,
-      title,
-      publishedAt,
-      userId,
-      id,
-    };
-    commit("setItem", { resource: "threads", item: thread });
-    commit("appendThreadToUser", { parentId: userId, childId: id });
-    commit("appendThreadToForum", { parentId: forumId, childId: id });
-    dispatch("createPost", { text, threadId: id });
-    return findById(state.threads, id);
+
+    // firebase
+    const threadRef = firebase.firestore().collection('threads').doc()
+    const thread = { forumId, title, publishedAt, userId, id: threadRef.id };
+    const userRef = firebase.firestore().collection("users").doc(userId);
+    const forumRef = firebase.firestore().collection("forums").doc(forumId);
+    const batch = firebase.firestore().batch()
+    batch.set(threadRef, thread)
+    batch.update(userRef, {
+      threads: firebase.firestore.FieldValue.arrayUnion(threadRef.id)
+    })
+    batch.update(forumRef, {
+      threads: firebase.firestore.FieldValue.arrayUnion(threadRef.id),
+    });
+    await batch.commit()
+    const newThread = await threadRef.get()
+
+    commit("setItem", { resource: "threads", item: { ...newThread.data(), id: newThread.id } });
+    commit("appendThreadToUser", { parentId: userId, childId: threadRef.id });
+    commit("appendThreadToForum", { parentId: forumId, childId: threadRef.id });
+    await dispatch("createPost", { text, threadId: threadRef.id });
+    return findById(state.threads, threadRef.id);
   },
   async updateThread({ commit, state }, { title, text, id }) {
     const thread = findById(state.threads, id);
     const post = findById(state.posts, thread.posts[0]);
     const newThread = { ...thread, title };
     const newPost = { ...post, text };
+
+    const threadRef = firebase.firestore().collection('threads').doc(id)
+    const postRef = firebase.firestore().collection("posts").doc(post.id);
+    const batch = firebase.firestore().batch()
+    batch.update(threadRef, newThread)
+    batch.update(postRef, newPost);
 
     commit("setItem", { resource: "threads", item: newThread });
     commit("setItem", { resource: "posts", item: newPost });
