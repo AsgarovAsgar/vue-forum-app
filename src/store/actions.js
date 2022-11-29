@@ -65,14 +65,17 @@ export default {
   async updateThread({ commit, state }, { title, text, id }) {
     const thread = findById(state.threads, id);
     const post = findById(state.posts, thread.posts[0]);
-    const newThread = { ...thread, title };
-    const newPost = { ...post, text };
+    let newThread = { ...thread, title };
+    let newPost = { ...post, text };
 
     const threadRef = firebase.firestore().collection('threads').doc(id)
     const postRef = firebase.firestore().collection("posts").doc(post.id);
     const batch = firebase.firestore().batch()
     batch.update(threadRef, newThread)
     batch.update(postRef, newPost);
+    await batch.commit()
+    newThread = await newThread.get()
+    newPost = await newPost.get();
 
     commit("setItem", { resource: "threads", item: newThread });
     commit("setItem", { resource: "posts", item: newPost });
