@@ -6,6 +6,12 @@ export default {
     // const userIndex = state.users.findIndex(user => user.id === userId)
     // state.users[userIndex] = user
   },
+  appendUnsubscribe(state, { unsubscribe }) {
+    state.unsubscribes.push(unsubscribe);
+  },
+  clearAllUnsubscribes(state) {
+    state.unsubscribes = []
+  },
   appendPostToThread: makeAppendChildToParentMutation({ parent: "threads", child: "posts" }),
   appendThreadToForum: makeAppendChildToParentMutation({ parent: "forums", child: "threads" }),
   appendThreadToUser: makeAppendChildToParentMutation({ parent: "users", child: "threads" }),

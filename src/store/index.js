@@ -14,6 +14,7 @@ export default createStore({
     users: [],
     // ...SourceData,
     authId: "u4r8XCziZEWEXsj2UIKNHBoDh0n2",
+    unsubscribes: []
   },
   getters,
   actions,
