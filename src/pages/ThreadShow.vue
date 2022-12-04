@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-slate-100 h-full">
+  <div v-if="asyncDataStatus_ready" class="bg-slate-100 h-full">
     <div class="p-4 max-w-4xl mx-auto space-y-4">
       <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold">{{thread.title}}</h1>
@@ -19,6 +19,8 @@
 import PostList from '@/components/PostList.vue'
 import PostEditor from '@/components/PostEditor.vue'
 import {mapActions} from 'vuex'
+import asyncDataStatus from '@/mixins/asyncDataStatus'
+
 
 // import firebase from 'firebase/compat/app';
 // import 'firebase/compat/auth';
@@ -26,6 +28,7 @@ import {mapActions} from 'vuex'
 
 export default {
   name: 'ThreadShow',
+  mixins: [asyncDataStatus],
   props: {
     id: {
       required: true,
@@ -62,7 +65,7 @@ export default {
     }
   },
   async created() {
-    console.log('threadShow created', this.id);
+    // console.log('threadShow created', this.id);
     // fetch the thread
     const thread = await this.fetchThread({id: this.id})
 
@@ -73,7 +76,8 @@ export default {
     const posts = await this.fetchPosts({ids: thread.posts})    
     //fetch the users associated with the posts
     const users = posts.map(post => post.userId).concat(thread.userId)
-    this.fetchUsers({ids: users})
+    await this.fetchUsers({ids: users})
+    this.asyncDataStatus_fetched()
 
     // thread.posts.forEach(async (postId) => {
     //   const post = await this.$store.dispatch('fetchPost', { id: postId })

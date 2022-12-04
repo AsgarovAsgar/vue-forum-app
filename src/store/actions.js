@@ -132,9 +132,11 @@ export default {
     console.log("🔥", emoji, id);
     return new Promise((resolve) => {
       const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot((doc) => {
+        // console.log('SNAPSHOT', id);
         const item = { ...doc.data(), id: doc.id };
         commit("setItem", { resource, item });
-        unsubscribe()
+
+        // setTimeout(() => { resolve(item)}, 500);
         resolve(item);
       });
       commit("appendUnsubscribe", { unsubscribe });

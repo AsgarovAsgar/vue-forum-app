@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-4 m-4">
+  <div v-if="asyncDataStatus_ready" class="space-y-4 m-4">
     <div v-if="forum" class="mx-auto max-w-6xl">
       <h1 class="text-3xl font-bold">{{ forum.name }}</h1>
       <div class="flex justify-between">
@@ -14,10 +14,13 @@
 <script>
 import ThreadList from '@/components/ThreadList'
 import { mapActions } from 'vuex'
+import asyncDataStatus from '@/mixins/asyncDataStatus'
+
 export default {
   components: {
     ThreadList
   },
+  mixins: [asyncDataStatus],
   props: {
     id: {
       required: true,
@@ -41,7 +44,8 @@ export default {
     // console.log('this.id', this.id);
     const forum = await this.fetchForum({ id: this.id })
     const threads = await this.fetchThreads({ids: forum.threads})
-    this.fetchUsers({ ids: threads.map(thread => thread.userId) })
+    await this.fetchUsers({ ids: threads.map(thread => thread.userId) })
+    this.asyncDataStatus_fetched()
   }
 }
 </script>
