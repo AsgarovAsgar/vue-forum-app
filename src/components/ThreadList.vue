@@ -4,7 +4,6 @@
   <div v-for="thread in threads" :key="thread.id" class=" py-2 px-4 w-full flex justify-between odd:bg-white even:bg-slate-100">
     <div class="w-3/4">
       <p class="text-green-500 text-lg">
-        {{thread.id}}
         <router-link :to="{name: 'ThreadShow', params: {id: thread.id}}">{{thread.title}}</router-link>
       </p>
       <p class="text-sm">By 

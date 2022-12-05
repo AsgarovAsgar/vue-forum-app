@@ -9,6 +9,8 @@ import ThreadEdit from "@/pages/ThreadEdit.vue";
 import NotFound from "@/pages/NotFound.vue";
 import Profile from "@/pages/Profile.vue";
 
+import store from '@/store'
+
 const routes = [
   {
     path: "/",
@@ -86,5 +88,9 @@ const router = createRouter({
     return scroll
   }
 });
+
+router.beforeEach(() => {
+  store.dispatch('unsubscribeAllSnapshots')
+})
 
 export default router
