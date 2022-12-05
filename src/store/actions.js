@@ -1,4 +1,4 @@
-import { findById } from "@/helpers";
+import { docToResource, findById } from "@/helpers";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
@@ -94,6 +94,21 @@ export default {
     commit("setItem", { resource: "threads", item: newThread });
     commit("setItem", { resource: "posts", item: newPost });
     return newThread;
+  },
+  async registerUserWithEmailAndPassword({ dispatch }, { email, name, username, avatar = null, password }) {
+    const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
+    dispatch('createUser', { id: result.user.uid, email, name, username, avatar })
+  },
+  async createUser({commit}, { id, email, name, username, avatar = null }) {
+    const registeredAt = firebase.firestore.FieldValue.serverTimestamp()
+    const usernameLower = username.toLowerCase()
+    email = email.toLowerCase()
+    const user  = { avatar, email, name, username, usernameLower, registeredAt }
+    const userRef = await firebase.firestore().collection('users').doc(id)
+    userRef.set(user)
+    const newUser = userRef.get()
+    commit('setItem', { resource: 'users', item: newUser })
+    return docToResource(newUser)
   },
   updateUser({ commit }, user) {
     commit("setItem", { resource: "users", item: user });
