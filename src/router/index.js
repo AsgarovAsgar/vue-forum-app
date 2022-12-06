@@ -8,6 +8,7 @@ import ThreadCreate from "@/pages/ThreadCreate.vue";
 import ThreadEdit from "@/pages/ThreadEdit.vue";
 import NotFound from "@/pages/NotFound.vue";
 import Profile from "@/pages/Profile.vue";
+import Register from "@/pages/Register.vue";
 
 import store from '@/store'
 
@@ -73,6 +74,11 @@ const routes = [
     name: 'ThreadEdit',
     component: ThreadEdit,
     props: true
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register
   },
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
 ];
