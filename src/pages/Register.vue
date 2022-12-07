@@ -25,7 +25,7 @@
         </div>
         <button type="submit" class="p-3 text-xl text-center rounded text-white bg-blue-500">Register</button>
       </form>
-      <button class="p-4 py-2 text-lg font-medium text-center rounded text-white bg-red-500">Sign up with Google</button>
+      <button @click="registerWithGoogle" class="p-4 py-2 text-lg font-medium text-center rounded text-white bg-red-500">Sign up with Google</button>
     </div>
   </div>
 </template>
@@ -47,6 +47,10 @@ export default {
     async register() {
       // await this.$store.dispatch('createUser', this.form)
       await this.$store.dispatch('registerUserWithEmailAndPassword', this.form)
+      this.$router.push('/')
+    },
+    async registerWithGoogle() {
+      await this.$store.dispatch('signInWithGoogle')
       this.$router.push('/')
     }
   },

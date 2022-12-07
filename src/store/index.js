@@ -13,10 +13,11 @@ export default createStore({
     threads: [],
     users: [],
     // ...SourceData,
-    authId: "u4r8XCziZEWEXsj2UIKNHBoDh0n2",
-    unsubscribes: []
+    // authId: "u4r8XCziZEWEXsj2UIKNHBoDh0n2",
+    authId: null,
+    unsubscribes: [],
   },
   getters,
   actions,
-  mutations
+  mutations,
 }); 

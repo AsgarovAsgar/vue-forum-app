@@ -97,8 +97,26 @@ export default {
   },
   async registerUserWithEmailAndPassword({ dispatch }, { email, name, username, avatar = null, password }) {
     const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
-    dispatch('createUser', { id: result.user.uid, email, name, username, avatar })
+    await dispatch('createUser', { id: result.user.uid, email, name, username, avatar })
+    // await dispatch("fetchAuthUser");
   },
+  signInWithEmailAndPassword(context, { email, password }) {
+    return firebase.auth().signInWithEmailAndPassword(email, password)
+  },
+  async signInWithGoogle({ dispatch }) {
+    const provider = new firebase.auth.GoogleAuthProvider
+    const response = await firebase.auth().signInWithPopup(provider)
+    const user = response.user
+    const userRef = firebase.firestore().collection('users').doc(user.uid)
+    const userDoc = await userRef.get()
+    if (!userDoc.exists) {
+      return dispatch('createUser', { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoURL })
+    }
+  },
+  async signOut({ commit }) {
+    await firebase.auth().signOut()
+    commit('setAuthId', null)
+  }, 
   async createUser({commit}, { id, email, name, username, avatar = null }) {
     const registeredAt = firebase.firestore.FieldValue.serverTimestamp()
     const usernameLower = username.toLowerCase()
@@ -118,7 +136,13 @@ export default {
   fetchThread: ({ dispatch }, { id }) => dispatch("fetchItem", { id, resource: "threads", emoji: "🧵" }),
   fetchPost: ({ dispatch }, { id }) => dispatch("fetchItem", { id, resource: "posts", emoji: "💌" }),
   fetchUser: ({ dispatch }, { id }) => dispatch("fetchItem", { id, resource: "users", emoji: "🙎‍♀️" }),
-  fetchAuthUser: ({ dispatch, state }) => dispatch("fetchItem", { id: state.authId, resource: "users", emoji: "🙎‍♀️ auth" }),
+  fetchAuthUser: ({ dispatch, state, commit }) => {
+    const userId = firebase.auth().currentUser?.uid
+    // console.log("userId", userId);
+    if(!userId) return
+    dispatch("fetchItem", { id: userId, resource: "users", emoji: "🙎‍♀️ auth" });
+    commit('setAuthId', userId)
+  },
   fetchAllCategories({ commit }) {
     console.log("🔥", "😻", "all");
     return new Promise((resolve) => {

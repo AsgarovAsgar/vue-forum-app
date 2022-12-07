@@ -6,6 +6,9 @@ export default {
     // const userIndex = state.users.findIndex(user => user.id === userId)
     // state.users[userIndex] = user
   },
+  setAuthId(state, id) {
+    state.authId = id
+  },
   appendUnsubscribe(state, { unsubscribe }) {
     state.unsubscribes.push(unsubscribe);
   },
