@@ -140,7 +140,9 @@ export default {
     const userId = firebase.auth().currentUser?.uid
     // console.log("userId", userId);
     if(!userId) return
-    dispatch("fetchItem", { id: userId, resource: "users", emoji: "🙎‍♀️ auth" });
+    dispatch("fetchItem", { id: userId, resource: "users", emoji: "🙎‍♀️ auth", handleUnsubscribe: (unsubscribe) => {
+      commit('setAuthUserUnsubscribe', unsubscribe)
+    } });
     commit('setAuthId', userId)
   },
   fetchAllCategories({ commit }) {
@@ -167,18 +169,24 @@ export default {
   fetchThreads: ({ dispatch }, { ids }) => dispatch("fetchItems", { ids, resource: "threads", emoji: "🧵" }),
   fetchPosts: ({ dispatch }, { ids }) => dispatch("fetchItems", { ids, resource: "posts", emoji: "💌" }),
   fetchUsers: ({ dispatch }, { ids }) => dispatch("fetchItems", { ids, resource: "users", emoji: "🙎‍♀️" }),
-  fetchItem({ state, commit }, { id, emoji, resource }) {
+  fetchItem({ state, commit }, { id, emoji, resource, handleUnsubscribe = null }) {
     console.log("🔥", emoji, id);
     return new Promise((resolve) => {
       const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot((doc) => {
         // console.log('SNAPSHOT', id);
+        // console.log('on snapshot', resource, doc.data())
         const item = { ...doc.data(), id: doc.id };
         commit("setItem", { resource, item });
 
         // setTimeout(() => { resolve(item)}, 500);
         resolve(item);
       });
-      commit("appendUnsubscribe", { unsubscribe });
+
+      if (handleUnsubscribe) {
+        handleUnsubscribe(unsubscribe);
+      } else {
+        commit("appendUnsubscribe", { unsubscribe });
+      }
     });
   },
   fetchItems({ dispatch }, { ids, resource, emoji }) {
@@ -189,5 +197,11 @@ export default {
   async unsubscribeAllSnapshots ({ state, commit }) {
     state.unsubscribes.forEach(unsubscribe => unsubscribe())
     commit('clearAllUnsubscribes');
+  },
+  async unsubscribeAuthUserSnapshot({ state, commit }) {
+    if(state.authUserUnsubscribe) {
+      state.authUserUnsubscribe();
+      commit('setAuthUserUnsubscribe', null)
+    }
   }
 };
