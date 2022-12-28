@@ -7,6 +7,22 @@ import db from "@/config/firebase";
 
 
 export default {
+  initAuthentication ({ dispatch, commit, state }) {
+    return new Promise((resolve) => {
+      if (state.authObserverUnsubscribe) state.authObserverUnsubscribe
+      const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+        console.log('user has changed');
+        this.dispatch("unsubscribeAuthUserSnapshot");
+        if (user) {
+          await this.dispatch("fetchAuthUser");
+          resolve(user)
+        } else {
+          resolve(null);
+        }
+      });
+      commit('setAuthObserverUnsubscribe', unsubscribe)
+    })
+  },
   async createPost({ commit, state }, post) {
     post.publishedAt = firebase.firestore.FieldValue.serverTimestamp()
     post.userId = state.authId;
@@ -136,11 +152,11 @@ export default {
   fetchThread: ({ dispatch }, { id }) => dispatch("fetchItem", { id, resource: "threads", emoji: "🧵" }),
   fetchPost: ({ dispatch }, { id }) => dispatch("fetchItem", { id, resource: "posts", emoji: "💌" }),
   fetchUser: ({ dispatch }, { id }) => dispatch("fetchItem", { id, resource: "users", emoji: "🙎‍♀️" }),
-  fetchAuthUser: ({ dispatch, state, commit }) => {
+  fetchAuthUser: async ({ dispatch, state, commit }) => {
     const userId = firebase.auth().currentUser?.uid
     // console.log("userId", userId);
     if(!userId) return
-    dispatch("fetchItem", { id: userId, resource: "users", emoji: "🙎‍♀️ auth", handleUnsubscribe: (unsubscribe) => {
+    await dispatch("fetchItem", { id: userId, resource: "users", emoji: "🙎‍♀️ auth", handleUnsubscribe: (unsubscribe) => {
       commit('setAuthUserUnsubscribe', unsubscribe)
     } });
     commit('setAuthId', userId)
@@ -175,11 +191,14 @@ export default {
       const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot((doc) => {
         // console.log('SNAPSHOT', id);
         // console.log('on snapshot', resource, doc.data())
-        const item = { ...doc.data(), id: doc.id };
-        commit("setItem", { resource, item });
 
-        // setTimeout(() => { resolve(item)}, 500);
-        resolve(item);
+        if(doc.exists) {
+          const item = { ...doc.data(), id: doc.id };
+          commit("setItem", { resource, item });
+          resolve(item);
+        } else {
+          resolve(null)
+        }
       });
 
       if (handleUnsubscribe) {
