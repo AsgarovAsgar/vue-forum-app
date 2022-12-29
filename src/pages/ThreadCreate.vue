@@ -1,7 +1,7 @@
 <template>
   <div v-if="asyncDataStatus_ready" class="flex flex-col max-w-3xl m-4 mx-auto gap-4">
     <h1 class="text-3xl font-bold">Create new thread in <i>{{forum.name}}</i></h1>
-    <ThreadEditor @save="save" @cancel="cancel" />
+    <ThreadEditor @save="save" @cancel="cancel" @dirty="formIsDirty = true" @clean="formIsDirty = false" />
   </div>
 </template>
 
@@ -20,6 +20,11 @@ export default {
       required: true
     }
   },
+  data() { 
+    return {
+      formIsDirty: false
+    }
+   },
   computed: {
     forum() {
       return this.$store.state.forums.find(forum => forum.id === this.forumId)
@@ -42,6 +47,12 @@ export default {
   async created() {
     await this.fetchForum({ id: this.forumId })
     this.asyncDataStatus_fetched()
+  },
+  beforeRouteLeave() {
+    if (this.formIsDirty) {
+      const confirmed = window.confirm('Are you sure you want to leave? Unsaved changes will be lost!')
+      if(!confirmed) return false
+    }
   }
 }
 </script>
