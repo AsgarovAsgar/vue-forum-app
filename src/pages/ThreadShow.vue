@@ -3,14 +3,22 @@
     <div class="p-4 max-w-4xl mx-auto space-y-4">
       <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold">{{thread.title}}</h1>
-        <router-link :to="{name: 'ThreadEdit', params: {id: this.id}}" class="rounded bg-blue-500 px-4 py-2 text-white text-sm" >Edit</router-link>
+        <router-link 
+          v-if="thread.userId === authUser?.id" 
+          :to="{name: 'ThreadEdit', params: {id: this.id}}" 
+          class="rounded bg-blue-500 px-4 py-2 text-white text-sm"
+        >Edit
+        </router-link>
       </div>
       <div class="flex items-center justify-between">
         <div>By {{ thread.author?.name }}, <AppDate :timestamp="thread.publishedAt" /></div>
         <p>{{thread.repliesCount}} replies by {{thread.contributorsCount}} contributors</p>
       </div>
       <PostList :posts="threadPosts"/>
-      <PostEditor @save="addPost" />
+      <PostEditor v-if="authUser" @save="addPost" />
+      <div v-else class="text-center">
+        <router-link class="text-green-500" :to="{ name: 'SignIn', query: { redirectTo: $route.path } }">Sign in</router-link> or <router-link class="text-green-500" :to="{ name: 'Register', query: { redirectTo: $route.path } }">Register</router-link> to reply
+      </div>
     </div>
   </div>
 </template>
@@ -18,7 +26,7 @@
 <script>
 import PostList from '@/components/PostList.vue'
 import PostEditor from '@/components/PostEditor.vue'
-import {mapActions} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
 
 
@@ -40,6 +48,7 @@ export default {
     PostEditor
   },
   computed: {
+    ...mapGetters(['authUser']),
     threads() { 
       return this.$store.state.threads 
     },
