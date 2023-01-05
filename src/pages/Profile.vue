@@ -1,7 +1,6 @@
 <template>
   <div class="flex flex-row max-w-5xl m-4 mx-auto gap-4">
-    Profile
-    <!-- <div class="flex flex-col gap-2 w-1/4">
+    <div class="flex flex-col gap-2 w-1/4">
       <UserProfileCard v-if="!edit" :user="user" />
       <UserProfileCardEditor v-else :user="user" />
     </div>
@@ -11,7 +10,7 @@
         <p class="text-green-500">See only started threads?</p>
       </div>
       <PostList :posts="user.posts"/>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -19,23 +18,27 @@
 import { mapGetters } from 'vuex'
 import store from '@/store'
 
-// import PostList from '@/components/PostList.vue'
-// import UserProfileCard from '@/components/UserProfileCard.vue'
-// import UserProfileCardEditor from '@/components/UserProfileCardEditor.vue'
+import PostList from '@/components/PostList.vue'
+import UserProfileCard from '@/components/UserProfileCard.vue'
+import UserProfileCardEditor from '@/components/UserProfileCardEditor.vue'
+import asyncDataStatus from '@/mixins/asyncDataStatus'
 
 export default {
-  // components: { PostList, UserProfileCard, UserProfileCardEditor },
+  components: { PostList, UserProfileCard, UserProfileCardEditor },
   props: {
     edit: {
       type: Boolean,
       default: false
     }
   },
+  mixins: [asyncDataStatus],
   computed: {
     ...mapGetters({ user: 'authUser'})
   },
-  created() {
-    this.$emit('ready')
+  async created() {
+    await this.$store.dispatch('fetchAuthUsersPosts')
+    this.asyncDataStatus_fetched()
+    // this.$emit('ready')
   }
 }
 </script>
