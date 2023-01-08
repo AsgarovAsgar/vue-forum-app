@@ -1,6 +1,5 @@
 <template>
   <div v-if="asyncDataStatus_ready">
-    <h1>{{ category.name }}</h1>
     <ForumList 
       :title="category.name"
       :forums="getForumForCategory(category)"
@@ -28,13 +27,14 @@ export default {
   },
   computed: {
     category() {
-      return this.$store.state.categories.find(category => category.id === this.id) || {}
+      return this.$store.state.categories.items.find(category => category.id === this.id) || {}
     }
   },
   methods: {
-    ...mapActions(['fetchCategory', 'fetchForums']),
+    ...mapActions('categories', ['fetchCategory']),
+    ...mapActions('forums', ['fetchForums']),
     getForumForCategory(category) {
-      return this.$store.state.forums.filter(forum => forum.categoryId === category.id)
+      return this.$store.state.forums.items.filter(forum => forum.categoryId === category.id)
     }
   },
   async created() {

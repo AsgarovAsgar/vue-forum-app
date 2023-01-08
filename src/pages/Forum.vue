@@ -29,16 +29,18 @@ export default {
   },
   computed: {
     forum() {
-      return this.$store.state.forums.find(forum => forum.id === this.id)
+      return this.$store.state.forums.items.find(forum => forum.id === this.id)
     },
     threads() {
       if (!this.forum) return []
-      return this.forum.threads.map(threadId => this.$store.getters.thread(threadId))
+      return this.forum.threads.map(threadId => this.$store.getters['threads/thread'](threadId))
       // return this.$store.state.threads.filter(thread => thread.forumId === this.id)
     }
   },
   methods: {
-    ...mapActions(['fetchForum', 'fetchThreads', 'fetchUsers']),
+    ...mapActions('forums', ['fetchForum']),
+    ...mapActions('threads', ['fetchThreads']),
+    ...mapActions('users', ['fetchUsers']),
   },
   async created() {
     // console.log('this.id', this.id);

@@ -1,23 +1,27 @@
 import { createStore } from 'vuex'
-import "firebase/compat/firestore";
 
 import getters from '@/store/getters'
 import actions from "@/store/actions";
 import mutations from "@/store/mutations";
 
+import auth from './modules/auth'
+import categories from "./modules/categories";
+import forums from "./modules/forums";
+import posts from "./modules/posts";
+import threads from "./modules/threads";
+import users from "./modules/users";
+
 export default createStore({
+  modules: {
+    auth,
+    categories,
+    forums,
+    posts,
+    threads,
+    users,
+  },
   state: {
-    categories: [],
-    forums: [],
-    posts: [],
-    threads: [],
-    users: [],
-    // ...SourceData,
-    // authId: "u4r8XCziZEWEXsj2UIKNHBoDh0n2",
-    authId: null,
     unsubscribes: [],
-    authUserUnsubscribe: null,
-    authObserverUnsubscribe: null
   },
   getters,
   actions,
