@@ -49,7 +49,7 @@ export default {
   methods: {
     save() {
       console.log('save');
-      this.$store.dispatch('updateUser', {...this.activeUser})
+      this.$store.dispatch('users/updateUser', {...this.activeUser})
       this.$router.push({name: 'Profile'})
     },
     cancel() {

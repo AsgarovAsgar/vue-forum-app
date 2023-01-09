@@ -18,7 +18,7 @@
             <p v-else>{{ post.text }}</p>
           </div>
           <button
-            v-if="post.userId === $store.state.authId"
+            v-if="post.userId === $store.state.auth.authId"
             @click="toggleEditMode(post.id)" 
             class="p-1.5 rounded bg-gray-100 hover:bg-gray-200 transition duration-300"
           >
@@ -56,13 +56,13 @@ export default {
   },
   computed: {
     users() {
-      return this.$store.state.users
+      return this.$store.state.users.items
     }
   },
   methods: {
-    ...mapActions(['updatePost']),
+    ...mapActions('posts', ['updatePost']),
     userById(userId) {
-      return this.$store.getters.user(userId)
+      return this.$store.getters['users/user'](userId)
       // return this.users.find(user => user.id === userId)
     },
     toggleEditMode(id) {
