@@ -7,6 +7,8 @@ import AppDate from '@/components/AppDate'
 
 // Import the functions you need from the SDKs you need
 import firebase from "firebase/compat/app";
+import ClickOutsideDirective from './plugins/ClickOutsideDirective';
+import PageScrollDirective from './plugins/PageScrollDirective';
 
 // import firebaseConfig from '@/config/firebase'
 const firebaseConfig = {
@@ -34,5 +36,7 @@ const forumApp = createApp(App)
 forumApp.component('AppDate', AppDate)
 forumApp.use(router);
 forumApp.use(store);
+forumApp.use(ClickOutsideDirective)
+forumApp.use(PageScrollDirective)
 forumApp.mount("#app");
 

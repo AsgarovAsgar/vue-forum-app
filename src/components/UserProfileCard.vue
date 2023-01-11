@@ -1,8 +1,9 @@
 <template>
   <div class="flex flex-col gap-2">
     <div class="p-4 flex flex-col gap-2 bg-white shadow rounded">
-      <img class="self-center w-36 h-36 rounded-full object-cover" :src="user.avatar" :alt="`${user.username}'s profile picture`">
-      <h1 class="self-center text-4xl font-bold">{{ user.username }}</h1>
+      <!-- <img v-if="user.avatar" class="self-center w-36 h-36 rounded-full object-cover" :src="user.avatar" :alt="`${user.username}'s profile picture`"> -->
+      <img class="self-center w-36 h-36 rounded-full object-cover" src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8Y2F0JTIwcHJpZmllbCUyMHBpY3N8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60" alt="">
+      <h1 class="self-center text-2xl font-bold break-all">{{ user.username }}</h1>
       <h2 class="text-xl">{{ user.name }}</h2>
       <p class="text-sm">{{user.bio || 'No bio specified.'}}</p>
       <div>
