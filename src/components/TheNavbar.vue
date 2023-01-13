@@ -24,8 +24,8 @@
           </svg>
         </button>
         <div v-if="isDropdownOpen && authUser" class="absolute top-12 right-0 flex flex-col overflow-hidden w-full shadow rounded bg-white">
-          <button class="text-left p-1.5 px-3 hover:bg-gray-100 w-full" @click="signOut">Sign Out</button>
           <router-link :to="{ name: 'Profile' }" class="text-left  p-1.5 px-3 hover:bg-gray-100 w-full">Profile</router-link>
+          <button class="text-left p-1.5 px-3 hover:bg-gray-100 w-full" @click="signOut">Sign Out</button>
         </div>
         <!-- <button v-if="authUser" class="p-1 px-2 border rounded text-white" @click="signOut">Sign Out</button> -->
         <router-link v-if="!authUser" class="p-1 px-2 border rounded text-white" :to="{ name: 'SignIn' }">Log in</router-link>
