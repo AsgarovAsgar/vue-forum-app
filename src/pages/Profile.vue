@@ -10,6 +10,10 @@
         <p class="text-green-500">See only started threads?</p>
       </div>
       <PostList :posts="user.posts"/>
+      <AppInfiniteScroll
+        @load="fetchUserPosts"
+        :done="user.posts.length === user.postsCount"
+      />
     </div>
   </div>
 </template>
@@ -22,9 +26,10 @@ import PostList from '@/components/PostList.vue'
 import UserProfileCard from '@/components/UserProfileCard.vue'
 import UserProfileCardEditor from '@/components/UserProfileCardEditor.vue'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
+import AppInfiniteScroll from '@/components/AppInfiniteScroll.vue'
 
 export default {
-  components: { PostList, UserProfileCard, UserProfileCardEditor },
+  components: { PostList, UserProfileCard, UserProfileCardEditor, AppInfiniteScroll },
   props: {
     edit: {
       type: Boolean,
@@ -33,10 +38,24 @@ export default {
   },
   mixins: [asyncDataStatus],
   computed: {
-    ...mapGetters('auth', { user: 'authUser'})
+    ...mapGetters('auth', { user: 'authUser'}),
+    lastPostFetched() {
+      if (this.user.posts.length === 0) return null
+      return this.user.posts[this.user.posts.length - 1]
+    }
+  },
+  methods: {
+    fetchUserPosts() {
+      return this.$store.dispatch('auth/fetchAuthUsersPosts', { startAfter: this.lastPostFetched })
+    }
   },
   async created() {
-    await this.$store.dispatch('auth/fetchAuthUsersPosts')
+    await this.fetchUserPosts()
+
+    // setTimeout(() => {
+    //   this.$store.dispatch('auth/fetchAuthUsersPosts', { startAfter: this.lastPostFetched })
+    // }, 2000)
+
     this.asyncDataStatus_fetched()
     // this.$emit('ready')
   }

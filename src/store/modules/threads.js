@@ -2,6 +2,7 @@ import { findById, docToResource, makeAppendChildToParentMutation } from "@/help
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
+import chunk from 'lodash/chunk'
 
 export default {
   namespaced: true,
@@ -80,9 +81,18 @@ export default {
     },
     fetchThread: ({ dispatch }, { id }) => dispatch("fetchItem", { id, resource: "threads", emoji: "🧵" }, { root: true }),
     fetchThreads: ({ dispatch }, { ids }) => dispatch("fetchItems", { ids, resource: "threads", emoji: "🧵" }, { root: true }),
+    fetchThreadsByPage: ({ dispatch, commit }, { ids, page, perPage = 10 }) => {
+      commit('clearThreads')
+      const chunks = chunk(ids, perPage)
+      const limitedIds = chunks[page - 1] // because arrays are 0 based, but page count starts from 1
+      return dispatch('fetchThreads', { ids: limitedIds })
+    }
   },
   mutations: {
     appendPostToThread: makeAppendChildToParentMutation({ parent: "threads", child: "posts" }),
-    appendContributorsToThread: makeAppendChildToParentMutation({ parent: "threads", child: "contributors" })
+    appendContributorsToThread: makeAppendChildToParentMutation({ parent: "threads", child: "contributors" }),
+    clearThreads(state) {
+      state.items = []
+    }
   },
 };

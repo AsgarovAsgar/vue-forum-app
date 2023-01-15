@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@hennge/vue3-pagination": "^1.0.17",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.6",
     "firebase": "^9.14.0",
