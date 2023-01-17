@@ -20,7 +20,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import store from '@/store'
 
 import PostList from '@/components/PostList.vue'
 import UserProfileCard from '@/components/UserProfileCard.vue'

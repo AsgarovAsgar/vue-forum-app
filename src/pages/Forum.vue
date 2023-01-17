@@ -1,6 +1,7 @@
 <template>
   <div v-if="asyncDataStatus_ready" class="space-y-4 m-4">
     <div v-if="forum" class="mx-auto max-w-6xl">
+      <p>id: {{id}}</p>
       <h1 class="text-3xl font-bold">{{ forum.name }}</h1>
       <div class="flex justify-between">
         <h2 class="text-xl font-bold">{{ forum.description }}</h2>
@@ -66,7 +67,6 @@ export default {
     ...mapActions('users', ['fetchUsers']),
   },
   async created() {
-    // console.log('this.id', this.id);
     const forum = await this.fetchForum({ id: this.id })
     const threads = await this.fetchThreadsByPage({ids: forum.threads, page: this.page, perPage: this.perPage })
     await this.fetchUsers({ ids: threads.map(thread => thread.userId) })
