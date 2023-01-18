@@ -1,4 +1,4 @@
-import { findById, docToResource, makeAppendChildToParentMutation } from "@/helpers";
+import { makeFetchItemAction, makeFetchItemsAction } from "@/helpers";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
@@ -53,8 +53,8 @@ export default {
       const updatedPost = postRef.get()
       commit('setItem', { resource: 'posts', item: updatedPost }, { root: true })
     },
-    fetchPost: ({ dispatch }, { id }) => dispatch("fetchItem", { id, resource: "posts", emoji: "💌" }, { root: true }),
-    fetchPosts: ({ dispatch }, { ids }) => dispatch("fetchItems", { ids, resource: "posts", emoji: "💌" }, { root: true }),
+    fetchPost: makeFetchItemAction({ resource: "posts", emoji: "💌" }),
+    fetchPosts: makeFetchItemsAction({ resource: "posts", emoji: "💌" }),
   },
   mutations: {},
 };

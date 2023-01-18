@@ -1,4 +1,4 @@
-import { findById, docToResource, makeAppendChildToParentMutation } from "@/helpers";
+import { findById, docToResource, makeAppendChildToParentMutation, makeFetchItemAction, makeFetchItemsAction } from "@/helpers";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
@@ -59,8 +59,8 @@ export default {
       await userRef.update(updates)
       commit("setItem", { resource: "users", item: user }, { root: true });
     },
-    fetchUser: ({ dispatch }, { id }) => dispatch("fetchItem", { id, resource: "users", emoji: "🙎‍♀️" }, { root: true }),
-    fetchUsers: ({ dispatch }, { ids }) => dispatch("fetchItems", { ids, resource: "users", emoji: "🙎‍♀️" }, { root: true }),
+    fetchUser: makeFetchItemAction({ resource: "users", emoji: "🙎‍♀️" }),
+    fetchUsers: makeFetchItemsAction({ resource: "users", emoji: "🙎‍♀️" }),
   },
   mutations: {
     appendThreadToUser: makeAppendChildToParentMutation({ parent: "users", child: "threads" }),

@@ -1,4 +1,4 @@
-import { findById, docToResource, makeAppendChildToParentMutation } from "@/helpers";
+import { findById, docToResource, makeAppendChildToParentMutation, makeFetchItemAction, makeFetchItemsAction } from "@/helpers";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
@@ -10,8 +10,8 @@ export default {
   },
   getters: {},
   actions: {
-    fetchForum: ({ dispatch }, { id }) => dispatch("fetchItem", { id, resource: "forums", emoji: "📜" }, { root: true }),
-    fetchForums: ({ dispatch }, { ids }) => dispatch("fetchItems", { ids, resource: "forums", emoji: "📜" }, { root: true }),
+    fetchForum: makeFetchItemAction({ resource: "forums", emoji: "📜" }),
+    fetchForums: makeFetchItemsAction({ resource: "forums", emoji: "📜" }),
   },
   mutations: {
     appendThreadToForum: makeAppendChildToParentMutation({ parent: "forums", child: "threads" }),
