@@ -1,4 +1,4 @@
-import { findById, docToResource, makeAppendChildToParentMutation } from "@/helpers";
+import { makeFetchItemAction, makeFetchItemsAction } from "@/helpers";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
@@ -10,8 +10,8 @@ export default {
   },
   getters: {},
   actions: {
-    fetchCategory: ({ dispatch }, { id }) => dispatch("fetchItem", { id, resource: "categories", emoji: "😻" }, { root: true }),
-    fetchCategories: ({ dispatch }, { ids }) => dispatch("fetchItems", { ids, resource: "categories", emoji: "😻" }, { root: true }),
+    fetchCategory: makeFetchItemAction({ resource: "categories", emoji: "😻" }),
+    fetchCategories: makeFetchItemsAction({ resource: "categories", emoji: "😻" }),
     fetchAllCategories({ commit }) {
       console.log("🔥", "😻", "all");
       return new Promise((resolve) => {

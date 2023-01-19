@@ -28,6 +28,8 @@ import PostList from '@/components/PostList.vue'
 import PostEditor from '@/components/PostEditor.vue'
 import { mapActions, mapGetters } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
+import useNotifications from '@/composables/useNotifications'
+import difference  from 'lodash/difference'
 
 
 // import firebase from 'firebase/compat/app';
@@ -46,6 +48,11 @@ export default {
   components: {
     PostList,
     PostEditor
+  },
+  setup () {
+    const { addNotification } = useNotifications()
+    // addNotification({ message: 'Dynamic notifixatopn' })
+    return { addNotification }
   },
   computed: {
     ...mapGetters('auth', ['authUser']),
@@ -73,28 +80,42 @@ export default {
         threadId: this.id,
       }
       this.createPost(post)
+    },
+    async fetchPostsWithUsers(ids) {
+      // fetch the posts
+      const posts = await this.fetchPosts({
+        ids,
+        onSnapshot: ({ isLocal, previousItem }) => {
+          if(!this.asyncDataStatus_ready || isLocal || (previousItem?.edited  && !previousItem?.edited?.at)) return
+          this.addNotification({ message: 'Thread recently updated' })
+        }
+      })    
+      //fetch the users associated with the posts
+      const users = posts.map(post => post.userId).concat(this.thread.userId)
+      await this.fetchUsers({ ids: users })
     }
   },
   async created() {
     // console.log('threadShow created', this.id);
     // fetch the thread
-    const thread = await this.fetchThread({id: this.id})
+    const thread = await this.fetchThread({
+      id: this.id,
+      onSnapshot: async ({ isLocal, item, previousItem }) => {
+        if(!this.asyncDataStatus_ready || isLocal) return
+        const newPosts = difference(item.posts, previousItem.posts)
+        const hasNewPosts = newPosts.length > 0
+        if(hasNewPosts) {
+          await this.fetchPostsWithUsers(newPosts)
+        } else {
+          this.addNotification({ message: 'Thread recently updated' })
+        }
+      }
+    })
 
     // fetch the user
     // this.fetchUser({id: thread.userId})
-
-    // fetch the posts
-    const posts = await this.fetchPosts({ids: thread.posts})    
-    //fetch the users associated with the posts
-    const users = posts.map(post => post.userId).concat(thread.userId)
-    await this.fetchUsers({ids: users})
+    this.fetchPostsWithUsers(thread.posts)
     this.asyncDataStatus_fetched()
-
-    // thread.posts.forEach(async (postId) => {
-    //   const post = await this.$store.dispatch('fetchPost', { id: postId })
-    //   // fetch the users
-    //   this.$store.dispatch('fetchUser', {id: post.userId})    
-    // })
   }
 }
 </script>

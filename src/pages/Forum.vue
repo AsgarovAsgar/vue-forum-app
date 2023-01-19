@@ -1,7 +1,6 @@
 <template>
   <div v-if="asyncDataStatus_ready" class="space-y-4 m-4">
     <div v-if="forum" class="mx-auto max-w-6xl">
-      <p>id: {{id}}</p>
       <h1 class="text-3xl font-bold">{{ forum.name }}</h1>
       <div class="flex justify-between">
         <h2 class="text-xl font-bold">{{ forum.description }}</h2>
