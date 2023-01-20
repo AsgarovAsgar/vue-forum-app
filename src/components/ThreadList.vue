@@ -14,7 +14,7 @@
       <p>{{thread.repliesCount}} replies</p>
     </div>
     <div class="flex gap-2 w-1/4">
-      <img class="w-10 h-10 rounded-full object-cover" :src="userById(thread.userId).avatar" alt="">
+      <AppAvatarImg class="w-10 h-10 rounded-full object-cover" :src="userById(thread.userId).avatar" />
       <div class="text-sm">
         <p class="text-green-500">
           <a href="#">{{ userById(thread.userId).name }}</a>

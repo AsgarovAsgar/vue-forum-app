@@ -20,8 +20,20 @@
           <input v-model="form.password" id="password" type="password" class="rounded p-2 border">
         </div>
         <div class="flex flex-col gap-1">
-          <label for="avatar" class="">Avatar</label>
-          <input v-model="form.avatar" id="avatar" type="text" class="rounded p-2 border">
+          <label for="avatar">
+            Avatar
+            <div v-if="avatarPreview">
+              <img :src="avatarPreview" class="h-40 border" alt="">
+            </div>
+          </label>
+          <input 
+            v-show="!avatarPreview"
+            id="avatar" 
+            type="file"
+            @change="handleImageUpload"
+            accept="image/*"
+            class="rounded p-2 border"
+          />
         </div>
         <button type="submit" class="p-3 text-xl text-center rounded text-white bg-blue-500">Register</button>
       </form>
@@ -34,6 +46,7 @@
 export default {
   data() {
     return {
+      avatarPreview: null,
       form: {
         name: '',
         username: '',
@@ -52,6 +65,15 @@ export default {
     async registerWithGoogle() {
       await this.$store.dispatch('auth/signInWithGoogle')
       this.$router.push('/')
+    },
+    handleImageUpload(e) {
+      this.form.avatar = e.target.files[0] //so file will be available for form submission
+      // for showing the preview of the image:
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        this.avatarPreview = event.target.result
+      }
+      reader.readAsDataURL(this.form.avatar)
     }
   },
   created() {
