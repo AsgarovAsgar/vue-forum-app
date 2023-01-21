@@ -4,6 +4,8 @@ import "./main.css";
 import router from '@/router'
 import store from "@/store";
 import AppDate from '@/components/AppDate'
+import AppSpinner from '@/components/AppSpinner'
+import AppAvatarImg from '@/components/AppAvatarImg'
 
 // Import the functions you need from the SDKs you need
 import firebase from "firebase/compat/app";
@@ -35,6 +37,8 @@ firebase.initializeApp(firebaseConfig);
 
 const forumApp = createApp(App)
 forumApp.component('AppDate', AppDate)
+forumApp.component('AppSpinner', AppSpinner)
+forumApp.component('AppAvatarImg', AppAvatarImg)
 forumApp.use(router);
 forumApp.use(store);
 forumApp.use(ClickOutsideDirective)

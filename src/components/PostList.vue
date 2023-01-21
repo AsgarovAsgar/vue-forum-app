@@ -3,7 +3,7 @@
     <div v-for="post in posts" :key="post.id" class="p-4 rounded shadow flex gap-8 bg-white">
       <div v-if="userById(post.userId)" class="flex flex-col gap-4 w-24">
         <h2 class="text-green-500 text-sm">{{ userById(post.userId).name }}</h2>
-        <img class="h-20 w-20 border rounded-full flex-shrink-0 object-cover" :src="userById(post.userId).avatar" alt="">
+        <AppAvatarImg class="h-20 w-20 border rounded-full flex-shrink-0 object-cover" :src="userById(post.userId).avatar" />
         <p class="text-xs">{{ userById(post.userId).postsCount }} posts</p>
         <p class="text-xs">{{ userById(post.userId).threadsCount }} threads</p>
       </div>
