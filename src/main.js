@@ -6,12 +6,14 @@ import store from "@/store";
 import AppDate from '@/components/AppDate'
 import AppSpinner from '@/components/AppSpinner'
 import AppAvatarImg from '@/components/AppAvatarImg'
+import AppFormField from '@/components/AppFormField'
 
 // Import the functions you need from the SDKs you need
 import firebase from "firebase/compat/app";
 import ClickOutsideDirective from './plugins/ClickOutsideDirective';
 import PageScrollDirective from './plugins/PageScrollDirective';
 import Vue3Pagination from './plugins/Vue3Pagination';
+import VeeValidatePlugin from './plugins/VeeValidatePlugin';
 
 // import firebaseConfig from '@/config/firebase'
 const firebaseConfig = {
@@ -39,11 +41,13 @@ const forumApp = createApp(App)
 forumApp.component('AppDate', AppDate)
 forumApp.component('AppSpinner', AppSpinner)
 forumApp.component('AppAvatarImg', AppAvatarImg)
+forumApp.component('AppFormField', AppFormField)
 forumApp.use(router);
 forumApp.use(store);
 forumApp.use(ClickOutsideDirective)
 forumApp.use(PageScrollDirective)
 forumApp.use(Vue3Pagination)
+forumApp.use(VeeValidatePlugin)
 forumApp.mount("#app");
 
 

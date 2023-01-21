@@ -1,20 +1,14 @@
 <template>
-  <form @submit.prevent="save" class="flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
-      <label for="title">Title:</label>
-      <input v-model="form.title" id="title" type="text" class="rounded border w-full p-2">
-    </div>
-    <div class="flex flex-col gap-2">
-      <label for="text">Content:</label>
-      <textarea v-model="form.text" id="text" cols="30" rows="10" class="rounded border w-full p-2"></textarea>
-    </div>
+  <VeeForm @submit="save" class="flex flex-col gap-4">
+    <AppFormField v-model="form.title" name="title" type="text" label="Title" rules="required" />
+    <AppFormField as="textarea" v-model="form.text" name="text" label="Content" rules="required" rows="10" cols="30" />
     <div class="flex space-x-2 justify-end text-white">
       <button @click="cancel" class="px-4 py-2 bg-red-500 rounded text-sm hover:bg-red-700">Cancel</button>
       <button type="submit" class="px-4 py-2 bg-blue-500 rounded text-sm hover:bg-blue-700">
         {{threadExist ? 'Update' : 'Publish'}}
       </button>
     </div>
-  </form>
+  </VeeForm>
 </template>
 
 <script>
