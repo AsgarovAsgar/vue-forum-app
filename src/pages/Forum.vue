@@ -53,7 +53,7 @@ export default {
       // return this.$store.state.threads.filter(thread => thread.forumId === this.id)
     },
     threadCount() {
-      return this.forum.threads.length
+      return this.forum.threads?.length || 0
     },
     totalPages() {
       if (!this.threadCount) return 0

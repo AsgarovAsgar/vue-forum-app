@@ -7,7 +7,7 @@
     <div class="md:w-3/4 space-y-2">
       <div class="pb-4 flex justify-between items-center border-b">
         <p class="text-xl">{{user.username}}'s recent activity</p>
-        <p class="text-green-500">See only started threads?</p>
+        <!-- <p class="text-green-500">See only started threads?</p> -->
       </div>
       <PostList :posts="user.posts"/>
       <AppInfiniteScroll

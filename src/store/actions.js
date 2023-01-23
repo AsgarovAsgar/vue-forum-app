@@ -12,7 +12,7 @@ export default {
   // Fetch multiple resources
   ////
   fetchItem({ state, commit }, { id, emoji, resource, handleUnsubscribe = null, once = false, onSnapshot = null }) {
-    console.log("🔥", emoji, id);
+    // console.log("🔥", emoji, id);
     return new Promise((resolve) => {
       const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot((doc) => {
         // console.log('SNAPSHOT', id);
@@ -20,7 +20,7 @@ export default {
 
         if(once) {
           unsubscribe()
-          console.log('unsubcribing for once option')
+          // console.log('unsubcribing for once option')
         }
 
         if(doc.exists) {
@@ -46,12 +46,14 @@ export default {
     });
   },
   fetchItems({ dispatch }, { ids, resource, emoji, onSnapshot = null }) {
-    return Promise.all(
-      ids.map((id) => dispatch("fetchItem", { id, resource, emoji, onSnapshot }))
-    );
+    ids = ids || []
+    return Promise.all(ids.map((id) => dispatch("fetchItem", { id, resource, emoji, onSnapshot })));
   },
   async unsubscribeAllSnapshots ({ state, commit }) {
     state.unsubscribes.forEach(unsubscribe => unsubscribe())
     commit('clearAllUnsubscribes');
   },
+  clearItems({ commit }, { modules = [] }) {
+    commit('clearItems', { modules })
+  }
 };

@@ -81,8 +81,8 @@ export default {
       this.uploadingImage = false
     },
     save() {
-      console.log('save');
-      this.$store.dispatch('users/updateUser', {...this.activeUser})
+      // console.log('save');
+      this.$store.dispatch('users/updateUser', {...this.activeUser, threads: this.activeUser.threadIds})
       this.$router.push({name: 'Profile'})
     },
     cancel() {
