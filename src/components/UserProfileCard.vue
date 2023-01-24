@@ -18,7 +18,7 @@
       </p>
     </div>
     <div class="space-y-4 flex flex-col items-center">
-      <p class="text-xs border-b py-2">Member since 2003, last visited 35 ago</p>
+      <!-- <p class="text-xs border-b py-2">Member since 2003, last visited 35 ago</p> -->
       <router-link :to="{ name: 'ProfileEdit' }" class="px-4 py-2 w-min whitespace-nowrap rounded text-sm text-white bg-green-500">Edit Profile</router-link>
     </div>
   </div>

@@ -36,8 +36,11 @@
       </div>
       <div class="flex flex-col gap-1">
         <label class="text-sm" for="location">Location</label>
-        <input v-model="activeUser.location" class="border rounded p-2 text-sm">
+        <input v-model="activeUser.location" class="border rounded p-2 text-sm" list="locations" @mouseenter="loadLocationOptions">
       </div>
+      <datalist id="locations">
+        <option v-for="location in locationOptions" :key="location.name.common" :value="location.name.common" />
+      </datalist>
       <div class="flex justify-between text-white">
         <button @click.prevent="cancel" class="px-4 py-2 bg-red-500 rounded text-sm hover:bg-red-700">Cancel</button>
         <button type="submit" class="px-4 py-2 bg-blue-500 rounded text-sm hover:bg-blue-700">Save</button>
@@ -59,11 +62,17 @@ export default {
   data() {
     return {
       uploadingImage: false,
-      activeUser: {...this.user}
+      activeUser: {...this.user},
+      locationOptions: []
     }
   },
   methods: {
     ...mapActions('auth', ['uploadAvatar']),
+    async loadLocationOptions() {
+      if(this.locationOptions.length) return
+      const res = await fetch('https://restcountries.com/v3/all')
+      this.locationOptions = await res.json()
+    },
     async handleAvatarUpload(e) {
       this.uploadingImage = true
       const file = e.target.files[0]
@@ -72,8 +81,8 @@ export default {
       this.uploadingImage = false
     },
     save() {
-      console.log('save');
-      this.$store.dispatch('users/updateUser', {...this.activeUser})
+      // console.log('save');
+      this.$store.dispatch('users/updateUser', {...this.activeUser, threads: this.activeUser.threadIds})
       this.$router.push({name: 'Profile'})
     },
     cancel() {
