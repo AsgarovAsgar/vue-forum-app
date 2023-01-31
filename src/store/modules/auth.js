@@ -18,6 +18,13 @@ export default {
     },
   },
   actions: {
+    async updateEmail({ state }, { email }) {
+      return firebase.auth().currentUser.updateEmail(email)
+    },
+    async reauthenticate({state}, { email, password }) {
+      const credential = firebase.auth.EmailAuthProvider.credential(email, password)
+      await firebase.auth().currentUser.reauthenticateWithCredential(credential)
+    },
     initAuthentication ({ dispatch, commit, state }) {
       return new Promise((resolve) => {
         if (state.authObserverUnsubscribe) state.authObserverUnsubscribe
